@@ -116,20 +116,17 @@ export class HttpClient {
     try {
       const hasBody = Object.keys(bodyParams).length > 0
       
-      // 这里的 headers 强制覆盖，确保不包含重复的 Notion-Version 在 Body 中
+      // 这里的 headers 处理是 401 的重灾区，我们要强制注入
       const requestConfig = {
         headers: {
-          'Authorization': `Bearer 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`,
+          'Authorization': `Bearer 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`, // 直接硬编码你的 Token 测试
           'Notion-Version': '2022-06-28',
-          ...(formData ? formData.getHeaders() : (hasBody ? { 'Content-Type': 'application/json' } : {}))
+          'Content-Type': 'application/json'
         },
       }
 
+      // 注意：这里删除了之前合并 ...headers 的逻辑，防止旧的错误 Header 覆盖我们的新 Header
       const response = await operationFn(urlParameters, hasBody ? bodyParams : undefined, requestConfig)
-      const responseHeaders = new Headers()
-      Object.entries(response.headers).forEach(([key, value]) => {
-        if (value) responseHeaders.append(key, value.toString())
-      })
 
       return { data: response.data, status: response.status, headers: responseHeaders }
     } catch (error: any) {
