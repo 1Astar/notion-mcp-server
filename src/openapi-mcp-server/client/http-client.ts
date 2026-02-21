@@ -120,15 +120,14 @@ export class HttpClient {
         ? formData.getHeaders()
         : { ...(hasBody ? { 'Content-Type': 'application/json' } : {}) }
       
-      const requestConfig = {
-        headers: {
-          ...headers,
-          // 再次确保 POST 请求也带上 Token
-          'Authorization': `Bearer ${process.env.NOTION_TOKEN}`,
-          'Notion-Version': '2022-06-28'
-        },
-      }
-
+     const requestConfig = {
+  headers: {
+    ...headers,
+    'Authorization': `Bearer ${process.env.NOTION_TOKEN}`, // 确保这一行在 headers 对象里
+    'Notion-Version': '2022-06-28',
+    'Content-Type': 'application/json'
+  },
+     }
       const response = await operationFn(urlParameters, hasBody ? bodyParams : undefined, requestConfig)
       const responseHeaders = new Headers()
       Object.entries(response.headers).forEach(([key, value]) => {
