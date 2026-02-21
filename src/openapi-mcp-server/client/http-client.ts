@@ -42,8 +42,7 @@ export class HttpClient {
         headers: {
           'Content-Type': 'application/json',
           'User-Agent': 'notion-mcp-server',
-          // 强制注入 Notion 认证头
-          'Authorization': `Bearer ${process.env.NOTION_TOKEN}`,
+          'Authorization': `Bearer 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`,
           'Notion-Version': '2022-06-28',
           ...config.headers,
         },
@@ -116,17 +115,16 @@ export class HttpClient {
 
     try {
       const hasBody = Object.keys(bodyParams).length > 0
-      const headers = formData
-        ? formData.getHeaders()
-        : { ...(hasBody ? { 'Content-Type': 'application/json' } : {}) }
       
-     const requestConfig = {
+      // 这里的 headers 强制覆盖，确保不包含重复的 Notion-Version 在 Body 中
+      const requestConfig = {
         headers: {
-          ...headers,
-          'Authorization': `Bearer ${process.env.NOTION_TOKEN}`
+          'Authorization': `Bearer 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`,
+          'Notion-Version': '2022-06-28',
+          ...(formData ? formData.getHeaders() : (hasBody ? { 'Content-Type': 'application/json' } : {}))
         },
-     }
-      
+      }
+
       const response = await operationFn(urlParameters, hasBody ? bodyParams : undefined, requestConfig)
       const responseHeaders = new Headers()
       Object.entries(response.headers).forEach(([key, value]) => {
