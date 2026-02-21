@@ -6,6 +6,13 @@ import fs from 'fs'
 import { Headers } from './polyfill-headers'
 import { isFileUploadParameter } from '../openapi/file-upload'
 
+// 在类构造函数或请求方法中确保这一行存在
+headers: {
+  ...headers,
+  'Authorization': `Bearer ${process.env.NOTION_TOKEN}`,
+  'Notion-Version': '2022-06-28'
+}
+
 export type HttpClientConfig = {
   baseUrl: string
   headers?: Record<string, string>
